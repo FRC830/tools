@@ -1,4 +1,4 @@
-import Tkinter, os, threading
+import Tkinter, os, subprocess, threading
 
 class cmdthread(threading.Thread):
     def __init__(self, commands):
@@ -9,7 +9,9 @@ class cmdthread(threading.Thread):
     def run(self):
         self.success = True
         for c in self.commands:
-            if os.system(c) != 0:
+            try:
+                subprocess.check_call(c, shell=True)
+            except subprocess.CalledProcessError:
                 self.success = False
                 break
         self.done = True
