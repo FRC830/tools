@@ -1,6 +1,10 @@
 import Tkinter, os, sys, subprocess, threading, ttk
 Tkinter.Button = ttk.Button
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+def restart():
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
 class cmdthread(threading.Thread):
     def __init__(self, commands):
         super(cmdthread, self).__init__()
@@ -58,7 +62,8 @@ class App(Tkinter.Frame):
         #self.title('Internet config')
         Tkinter.Button(self, text='Normal Internet', command=self.cmd_internet).grid(row=1, column=1)
         Tkinter.Button(self, text='cRIO', command=self.cmd_crio).grid(row=1, column=2)
-        Tkinter.Button(self, text='Quit', command=sys.exit).grid(row=1, column=3)
+        Tkinter.Button(self, text='Quit', command=sys.exit).grid(row=2, column=1)
+        Tkinter.Button(self, text='Restart', command=restart).grid(row=2, column=2)
 
     def cmd_internet(self):
         CmdWin(self, ['netsh int ip set address name = "Wireless" source = dhcp'])
