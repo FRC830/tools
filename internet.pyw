@@ -1,4 +1,5 @@
-import Tkinter, os, sys, subprocess, threading
+import Tkinter, os, sys, subprocess, threading, ttk
+Tkinter.Button = ttk.Button
 
 class cmdthread(threading.Thread):
     def __init__(self, commands):
