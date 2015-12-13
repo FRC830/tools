@@ -1,9 +1,14 @@
-import Tkinter, os, sys, subprocess, threading, ttk
+import Tkinter, os, platform, sys, subprocess, threading, ttk
 Tkinter.Button = ttk.Button
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def restart():
     os.execl(sys.executable, sys.executable, *sys.argv)
+
+wireless_name = 'Wireless'
+if float('.'.join(platform.version().split('.')[:2])) >= 6.2:
+    # windows 8+
+    wireless_name = 'Wi-Fi'
 
 class cmdthread(threading.Thread):
     def __init__(self, commands):
@@ -15,7 +20,7 @@ class cmdthread(threading.Thread):
         self.success = True
         for c in self.commands:
             try:
-                subprocess.check_output(c, shell=True)
+                subprocess.check_output(c.format(**globals()), shell=True)
             except subprocess.CalledProcessError as e:
                 self.success = False
                 self.error = e
@@ -66,12 +71,12 @@ class App(Tkinter.Frame):
         Tkinter.Button(self, text='Restart', command=restart).grid(row=2, column=2)
 
     def cmd_internet(self):
-        CmdWin(self, ['netsh int ip set address name = "Wireless" source = dhcp'])
+        CmdWin(self, ['netsh int ip set address name = "{wireless_name}" source = dhcp'])
 
     def cmd_crio(self):
         CmdWin(self, [
             'netsh int ip set address name = "Local Area Connection" source = static addr = 10.8.30.37 mask = 255.255.255.0',
-            'netsh int ip set address name = "Wireless" source = static addr = 10.8.30.51 mask = 255.255.255.0',
+            'netsh int ip set address name = "{wireless_name}" source = static addr = 10.8.30.51 mask = 255.255.255.0',
         ])
 
 if __name__ == '__main__':
